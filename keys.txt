@@ -1,1 +1,1 @@
-suiprivkey
+node mine.js --fomo --chain=mainnet --phrase="secretphrase"
