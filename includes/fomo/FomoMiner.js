@@ -137,7 +137,7 @@ export default class FomoMiner {
         if (this._suiMaster._debug) {
             console.log('NAILONG | Trying to find the miner object already registered on the blockchain....');
         }
-        const paginated = await this._movePackage.modules.miner.getOwnedObjects({ typeName: 'Miner' });
+        const paginated = await this._movePackage.modules.coin.getOwnedObjects({ typeName: 'UserTimestore' });
         let miner = null;
         this._miners = [];
         await paginated.forEach((suiObject)=>{ 
@@ -146,7 +146,8 @@ export default class FomoMiner {
             this._miners.push(miner);
             });
         if (miner) {
-           if(this._miners.length >= 10){
+           if(this._miners.length >= 1){
+                console.log(this._suiMaster.address,'NAILONG | 当前子objectID数:',this._miners.length);
 			   return miner;
 		   }
         }
@@ -384,7 +385,7 @@ export default class FomoMiner {
         let foundValid = false;
         while (!foundValid) {
             let abab = 5;
-            nonce = BigInt(abab);
+            let nonce = BigInt(abab);
             if (nonce !== null) {
                 txs.push(new MiningData(miner.id));
                 foundValid = true;
@@ -420,10 +421,11 @@ export default class FomoMiner {
         suiMasterParams.privateKey = this._key;
         const suiMaster = new SuiMaster(suiMasterParams);
         await suiMaster.initialize();
-    const processCount = Math.floor(txs.length / 10) * 10;
+        const processCount =  1;
+    //const processCount = Math.floor(txs.length / 10) * 10;
     for (let i = 0; i < processCount; i++) {
         let args = [
-            tx.object("0x1f9eb09e038cad251fcc898994c2da9d3683c89dbc4387cf542e43b9131d2075"), // bus
+            tx.object("0x1f9eb09e038cad251fcc898994c2da9d3683c89dbc4387cf542e43b9131d2075"),
             tx.object(txs[i].mineid), // miner
             tx.object('0x0000000000000000000000000000000000000000000000000000000000000006'), // clock
         ];
@@ -435,7 +437,7 @@ export default class FomoMiner {
     }
 
     if (moveCallResults.length > 0) {
-        tx.transferObjects(moveCallResults, this._suiMaster.address);
+        //tx.transferObjects(moveCallResults, this._suiMaster.address);
         tx.setGasBudget(100009712);
     }
         try {
